@@ -4,22 +4,33 @@ on:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   docker:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: eu-central-1
+      ECR_URI: 333813598365.dkr.ecr.eu-central-1.amazonaws.com
+
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC role assumption
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: eu-central-1
+          aws-region: ${{ env.AWS_REGION }}
           role-to-assume: arn:aws:iam::333813598365:role/GithubRole
 
+      # Login to ECR
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      # Build and push
       - name: Build and Push
         run: |
           docker build -t appointmentservice ./docker/appointmentservice
