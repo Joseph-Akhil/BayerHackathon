@@ -11,3 +11,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+permissions:
+  id-token: write
+  contents: read
