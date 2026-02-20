@@ -23,7 +23,7 @@ jobs:
           role-to-assume: arn:aws:iam::333813598365:role/GithubRole
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name akhil-eks --region eu-central-1
+        run: aws eks update-kubeconfig --name patient-appointment-eks --region eu-central-1
 
       - name: Deploy
         run: kubectl apply -f k8s/
