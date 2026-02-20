@@ -33,6 +33,6 @@ jobs:
       # Build and push
       - name: Build and Push
         run: |
-          docker build -t appointmentservice .
+          docker build -t appointmentservice -f docker/appointmentservice/Dockerfile .
           docker tag appointmentservice:latest $ECR_URI/appointmentservice:latest
           docker push $ECR_URI/appointmentservice:latest
