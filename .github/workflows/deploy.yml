@@ -9,6 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write     # ⭐ REQUIRED for OIDC
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,7 +23,7 @@ jobs:
           role-to-assume: arn:aws:iam::333813598365:role/GithubRole
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name akhil-eks
+        run: aws eks update-kubeconfig --name akhil-eks --region eu-central-1
 
       - name: Deploy
         run: kubectl apply -f k8s/
