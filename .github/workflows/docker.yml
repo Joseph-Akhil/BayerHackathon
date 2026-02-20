@@ -1,0 +1,27 @@
+name: Build and Push Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-southeast-1
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push
+        run: |
+          docker build -t appointmentservice ./docker/appointmentservice
+          docker tag appointmentservice:latest $ECR_URI/appointmentservice:latest
+          docker push $ECR_URI/appointmentservice:latest
