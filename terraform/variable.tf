@@ -13,5 +13,5 @@ variable "environment" {
 variable "project_name" {
   description = "Project name prefix"
   type        = string
-  default     = "patient-appointment-akhil"
+  default     = "patient-appointment-"
 }
