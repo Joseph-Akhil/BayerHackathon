@@ -18,7 +18,7 @@ spec:
           image: 333813598365.dkr.ecr.eu-central-1.amazonaws.com/appointmentservice:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000   # 🔥 change if your app uses different port
+            - containerPort: 3001   # 🔥 change if your app uses different port
 ---
 apiVersion: v1
 kind: Service
@@ -31,5 +31,5 @@ spec:
     app: appointmentservice
   ports:
     - port: 80
-      targetPort: 3000   # must match containerPort
+      targetPort: 3001   # must match containerPort
       protocol: TCP
