@@ -1,30 +1,44 @@
-name: Terraform Apply
+name: Terraform provisioning...
 
 on:
   push:
-    branches: [ main ]
     paths:
-      - 'terraform/**'
-
-permissions:
-  id-token: write
-  contents: read
+      - "terraform/**"
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+    permissions:
+      id-token: write
+      contents: read
 
-      - name: Configure AWS
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ✅ Install Terraform PROPERLY
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      # ✅ Configure AWS
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: eu-central-1
           role-to-assume: arn:aws:iam::333813598365:role/GithubRole
+          aws-region: eu-central-1
+
+      # ✅ Debug (optional but powerful)
+      - name: Terraform Version
+        run: terraform version
 
       - name: Terraform Init
         run: terraform -chdir=terraform init
 
-      - name: Terraform Apply
-        run: terraform -chdir=terraform apply -auto-approve
+      - name: Terraform Validate
+        run: terraform -chdir=terraform validate
+
+      - name: Terraform Plan
+        run: terraform -chdir=terraform plan
