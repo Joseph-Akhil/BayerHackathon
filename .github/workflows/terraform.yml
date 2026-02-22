@@ -1,4 +1,4 @@
-name: Terraform
+name: Terraform provisioning...
 
 on:
   push:
@@ -9,10 +9,20 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write   # REQUIRED for OIDC
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: hashicorp/setup-terraform@v3
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::333813598365:role/GithubRole
+          aws-region: ap-south-1
 
       - name: Terraform Init
         run: terraform init
