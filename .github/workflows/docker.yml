@@ -1,8 +1,9 @@
 name: Build and Push Docker
 
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["Terraform Apply"]
+    types: [completed]
 
 permissions:
   id-token: write
@@ -19,20 +20,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # OIDC role assumption
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: eu-central-1
           role-to-assume: arn:aws:iam::333813598365:role/GithubRole
 
-      # Login to ECR
       - name: Login to ECR
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # Build and push
-      - name: Build and Push
         run: |
-          docker build -t appointmentservice -f docker/appointmentservice/Dockerfile docker/appointmentservice
+          aws ecr get-login-password --region $AWS_REGION \
+          | docker login --username AWS --password-stdin $ECR_URI
+
+      - name: Build & Push Appointment
+        run: |
+          docker build -t appointmentservice ./docker/appointmentservice
           docker tag appointmentservice:latest $ECR_URI/appointmentservice:latest
           docker push $ECR_URI/appointmentservice:latest
